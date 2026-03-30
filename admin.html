@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .admin-nav {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-top: 80px;
+            /* Offset fixed header */
+        }
+
+        .admin-nav .container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .tab-content {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Admin.</div>
+                <div class="auth-links">
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-nav">
+        <div class="container">
+            <a href="admin.html" class="active">Appointments</a>
+            <a href="admin-services.html">Services</a>
+            <a href="admin-barbers.html">Barbers</a>
+            <a href="admin-customers.html">Customers</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container container" style="margin-top: 2rem;">
+
+        <div id="appointments" style="width: 100%;">
+            <h2>Manage Appointments</h2>
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; overflow-x: auto;">
+                <table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Barber</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/admin.js"></script>
+</body>
+
+</html>

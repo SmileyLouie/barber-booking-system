@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Dashboard - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--success);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+        }
+
+        .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* Availability Banner */
+        .availability-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-card);
+            padding: 20px 24px;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .availability-container h3 {
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #1f1a0a 100%);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .welcome-banner .avatar {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .welcome-banner h2 {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+            color: var(--primary);
+        }
+
+        .welcome-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Table Badge Status */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-Pending {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--primary);
+        }
+
+        .status-Approved {
+            background: rgba(46, 213, 115, 0.2);
+            color: var(--success);
+        }
+
+        .status-Completed {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .status-Cancelled {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Barber Portal.</div>
+                <div class="auth-links">
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 120px; padding-bottom: 50px;">
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="avatar" id="barber-initial">?</div>
+            <div>
+                <h2 id="barber-name">Loading...</h2>
+                <p id="barber-specialty">Loading specialty...</p>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-total">-</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-pending">-</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-approved">-</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-completed">-</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <!-- Availability Toggle -->
+        <div class="availability-container">
+            <div>
+                <h3>My Availability</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;" id="avail-text">Loading...</p>
+            </div>
+            <label class="switch" style="margin-left: auto;">
+                <input type="checkbox" id="availability-toggle" onchange="toggleAvailability(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Appointments Table -->
+        <div id="appointments">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2>My Appointments</h2>
+                <button class="btn btn-outline" onclick="renderAppointments()"
+                    style="font-size:0.85rem; padding:8px 16px;">↻ Refresh</button>
+            </div>
+            <div
+                style="background: var(--bg-card); padding: 1rem; border-radius: 10px; overflow-x: auto; border: 1px solid var(--border);">
+                <table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verify session with server — never trust localStorage for auth
+            let barberId = null;
+            try {
+                const res = await fetch(API_URL + 'auth.php?action=check', { credentials: 'include' });
+                const data = await res.json();
+                if (!data.logged_in || data.user.role !== 'barber') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                barberId = data.user.barber_id;
+                // Keep localStorage in sync for convenience (non-security use only)
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+            } catch (e) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await initBarberData(barberId);
+            await renderAppointments();
+        });
+
+        async function initBarberData(barberId) {
+            try {
+                const barbers = await getBarbers();
+                const me = barbers.find(b => parseInt(b.barber_id) === parseInt(barberId));
+                if (me) {
+                    const toggle = document.getElementById('availability-toggle');
+                    const text = document.getElementById('avail-text');
+                    const nameEl = document.getElementById('barber-name');
+                    const specEl = document.getElementById('barber-specialty');
+                    const initialEl = document.getElementById('barber-initial');
+
+                    nameEl.textContent = 'Welcome back, ' + me.name + '!';
+                    specEl.textContent = 'Specialty: ' + me.specialty;
+                    initialEl.textContent = me.name.charAt(0).toUpperCase();
+
+                    toggle.checked = (parseInt(me.availability) === 1);
+                    text.textContent = toggle.checked
+                        ? '✅ Customers can see and book you.'
+                        : '🚫 You are hidden from the booking page.';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function toggleAvailability(isAvail) {
+            try {
+                const res = await fetch(API_URL + 'barbers.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'toggle_availability', availability: isAvail })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('avail-text').textContent = isAvail
+                        ? '✅ Customers can see and book you.'
+                        : '🚫 You are hidden from the booking page.';
+                } else {
+                    alert('Failed to update availability.');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function renderAppointments() {
+            try {
+                const resApt = await fetch(API_URL + 'appointments.php');
+                const apts = await resApt.json();
+
+                // Update stats
+                document.getElementById('stat-total').textContent = apts.length;
+                document.getElementById('stat-pending').textContent = apts.filter(a => a.status === 'Pending').length;
+                document.getElementById('stat-approved').textContent = apts.filter(a => a.status === 'Approved').length;
+                document.getElementById('stat-completed').textContent = apts.filter(a => a.status === 'Completed').length;
+
+                const aptTbody = document.querySelector('#appointments-table tbody');
+                if (apts.length) {
+                    aptTbody.innerHTML = apts.map(a => `
+                        <tr>
+                            <td>${a.appointment_date}<br><small style="color:var(--text-muted)">${a.appointment_time}</small></td>
+                            <td>
+                                ${a.customer_name ? `<strong>${a.customer_name}</strong>` : `<span style="color:var(--primary)">${a.guest_name}</span> <br><small style="color:var(--text-muted)">${a.guest_email || 'No email'}</small>`}
+                            </td>
+                            <td>${a.service_name}</td>
+                            <td><span class="status-badge status-${a.status}">${a.status}</span></td>
+                            <td>
+                                <select onchange="updateAptStatus(${a.appointment_id}, this.value)"
+                                    style="background: var(--bg-card); color: white; border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px;">
+                                    <option value="Pending" ${a.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Approved" ${a.status === 'Approved' ? 'selected' : ''}>Approved</option>
+                                    <option value="Completed" ${a.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="Cancelled" ${a.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    aptTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">No appointments scheduled yet.</td></tr>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function updateAptStatus(id, newStatus) {
+            try {
+                const res = await fetch(API_URL + 'appointments.php', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ appointment_id: id, status: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    await renderAppointments(); // re-render to refresh stats too
+                } else {
+                    alert('Failed to update: ' + data.error);
+                }
+            } catch (e) { console.error(e); }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbers - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Barbers.</div>
+                <ul class="nav-links" id="mobile-nav">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="barbers.html" class="active" style="color: var(--primary);">Barbers</a></li>
+                    <li><a href="booking.html">Book Appointment</a></li>
+                </ul>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div class="auth-links" id="auth-links"></div>
+                    <button class="hamburger" onclick="document.getElementById('mobile-nav').classList.toggle('open')" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 120px; padding-bottom: 50px;">
+        <h1 class="section-title">Meet Our Master Barbers</h1>
+        <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">Decades of
+            combined experience, dedicated to the craft of traditional barbering.</p>
+
+        <div class="grid" id="barbers-container">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="color: #666;">&copy; 2026 Camotes Island Barbers.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const barbers = await getBarbers();
+            const container = document.getElementById('barbers-container');
+            container.innerHTML = barbers.map(barber => `
+                <div class="card" style="opacity: ${parseInt(barber.availability) === 0 ? '0.6' : '1'}">
+                    <img src="${barber.image || 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=400&q=80'}" alt="${barber.name}">
+                    <div class="card-content">
+                        <div class="card-title">${barber.name}</div>
+                        <p style="color: var(--primary); margin-bottom: 0.5rem; font-weight: 600;">Specialty: ${barber.specialty}</p>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Experience: ${barber.experience || 'Not specified'}</p>
+                        ${parseInt(barber.availability) === 1
+                    ? `<a href="booking.html?barber=${barber.barber_id}" class="btn btn-outline">Book with ${barber.name}</a>`
+                    : `<button class="btn btn-outline" style="cursor: not-allowed; border-color: var(--text-muted); color: var(--text-muted);" disabled>Currently Unavailable</button>`
+                }
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+
+</html>

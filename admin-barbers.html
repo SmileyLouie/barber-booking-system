@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Barbers - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .admin-nav {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        .admin-nav .container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Admin.</div>
+                <div class="auth-links">
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-nav">
+        <div class="container">
+            <a href="admin.html">Appointments</a>
+            <a href="admin-services.html">Services</a>
+            <a href="admin-barbers.html" class="active">Barbers</a>
+            <a href="admin-customers.html">Customers</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container container" style="margin-top: 2rem;">
+        <div id="barbers" style="width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2>Manage Barbers</h2>
+                <button class="btn btn-primary"
+                    onclick="document.getElementById('add-barber-form').style.display='block'">+ Add Barber</button>
+            </div>
+
+            <div id="add-barber-form"
+                style="display:none; background: var(--bg-card); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--primary);">
+                <h3>New Barber</h3>
+                <form onsubmit="addBarber(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Barber Name</label>
+                            <input type="text" id="b-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Specialty</label>
+                            <input type="text" id="b-spec" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Login Email</label>
+                            <input type="email" id="b-email" class="form-control" placeholder="barber@camotes.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Login Password</label>
+                            <input type="text" id="b-password" class="form-control" placeholder="Temp password" value="camotes123" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Image URL (Optional)</label>
+                            <input type="text" id="b-image" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Assigned Services</label>
+                            <div id="base-services-checklist"
+                                style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; margin-top:5px; background: var(--bg-dark); padding:10px; border-radius:4px; max-height:200px; overflow-y:auto;">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Barber</button>
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('add-barber-form').style.display='none'">Cancel</button>
+                </form>
+            </div>
+
+            <div class="grid" id="admin-barbers-list"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+        // Use the unified renderAdminDashboard but handle the services checklist specifically here as it's part of the form
+        async function initPage() {
+            // Load services for the checklist
+            const services = await getServices();
+            const serviceChecklist = document.getElementById('base-services-checklist');
+            if (serviceChecklist && services.length) {
+                serviceChecklist.innerHTML = services.map(s => `
+                    <label style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" name="b-services" value="${s.service_id}" checked> 
+                        ${s.service_name}
+                    </label>
+                `).join('');
+            }
+        }
+        initPage();
+
+        // Specific form logic for this page
+        async function addBarber(e) {
+            e.preventDefault();
+            const selectedServices = Array.from(document.querySelectorAll('input[name="b-services"]:checked')).map(cb => cb.value);
+            const payload = {
+                action: 'create',
+                name: document.getElementById('b-name').value,
+                email: document.getElementById('b-email').value,
+                password: document.getElementById('b-password').value,
+                specialty: document.getElementById('b-spec').value,
+                image: document.getElementById('b-image').value || '',
+                services: selectedServices
+            };
+
+            try {
+                const res = await fetch(API_URL + 'barbers.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('add-barber-form').style.display = 'none';
+                    e.target.reset();
+                    await renderAdminDashboard();
+                    showToast('Barber account created successfully!');
+                } else showToast(data.error || 'Error adding barber', true);
+            } catch (err) { console.error(err); }
+        }
+    </script>
+</body>
+
+</html>

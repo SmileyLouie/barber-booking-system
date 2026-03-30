@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Barbers.</div>
+                <ul class="nav-links" id="mobile-nav">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="barbers.html">Barbers</a></li>
+                    <li><a href="booking.html" class="active" style="color: var(--primary);">Book Appointment</a></li>
+                </ul>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div class="auth-links" id="auth-links"></div>
+                    <button class="hamburger" onclick="document.getElementById('mobile-nav').classList.toggle('open')" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 120px; padding-bottom: 50px;">
+        <h1 class="section-title">Schedule Your Visit</h1>
+        <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">Walk-ins are
+            welcome, but appointments are highly recommended to avoid wait times.</p>
+
+        <div
+            style="max-width: 600px; margin: 0 auto; background-color: var(--bg-card); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+            <form id="booking-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="b-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="b-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="b-phone" class="form-control" required>
+                </div>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label>Select Service</label>
+                        <select id="b-service" class="form-control" required>
+                            <option value="">-- Choose --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Select Barber</label>
+                        <select id="b-barber" class="form-control" required>
+                            <option value="">-- Any Available --</option>
+                        </select>
+                        <div class="booking-warning" id="no-barber-warning">⚠️ No barbers are available for this service. Please choose a different service.</div>
+                    </div>
+                </div>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label>Date</label>
+                        <input type="date" id="b-date" class="form-control" required>
+                    </div>
+                    <div>
+                        <label>Time</label>
+                        <input type="time" id="b-time" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="b-notes" class="form-control" rows="3"></textarea>
+                </div>
+
+                <button type="submit" id="submit-booking" class="btn btn-primary" style="width: 100%;">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="color: #666;">&copy; 2026 Camotes Island Barbers.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const preService = urlParams.get('service');
+            const preBarber = urlParams.get('barber');
+
+            const serviceSelect = document.getElementById('b-service');
+            const barberSelect = document.getElementById('b-barber');
+            const dateInput = document.getElementById('b-date');
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+
+            // Populate services
+            const services = await getServices();
+            services.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.service_id;
+                opt.textContent = `${s.service_name} (₱${parseFloat(s.price).toFixed(2)})`;
+                if (preService == s.service_id) opt.selected = true;
+                serviceSelect.appendChild(opt);
+            });
+
+            // Populate barbers based on selected service
+            let allBarbers = await getBarbers();
+
+            function refreshBarbersList() {
+                const selectedServiceId = serviceSelect.value;
+                barberSelect.innerHTML = '<option value="">-- Any Available --</option>';
+                const warning = document.getElementById('no-barber-warning');
+                const submitBtn = document.getElementById('submit-booking');
+
+                if (!selectedServiceId) {
+                    warning.style.display = 'none';
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Compare as strings — DB returns int, select.value is string
+                const validBarbers = allBarbers.filter(b =>
+                    parseInt(b.availability) === 1 &&
+                    Array.isArray(b.services) &&
+                    b.services.map(String).includes(String(selectedServiceId))
+                );
+
+                if (validBarbers.length === 0) {
+                    warning.style.display = 'block';
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = '0.5';
+                    submitBtn.style.cursor = 'not-allowed';
+                } else {
+                    warning.style.display = 'none';
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                }
+
+                validBarbers.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b.barber_id;
+                    opt.textContent = b.name;
+                    if (preBarber == b.barber_id) opt.selected = true;
+                    barberSelect.appendChild(opt);
+                });
+            }
+
+            // Listen for service changes
+            serviceSelect.addEventListener('change', refreshBarbersList);
+
+            // Initial load if a service was passed in URL
+            if (preService) {
+                refreshBarbersList();
+            }
+
+            // Handle submission
+            document.getElementById('booking-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const payload = {
+                    name: document.getElementById('b-name').value,
+                    email: document.getElementById('b-email').value,
+                    phone: document.getElementById('b-phone').value,
+                    service_id: serviceSelect.value,
+                    barber_id: barberSelect.value,
+                    date: document.getElementById('b-date').value,
+                    time: document.getElementById('b-time').value,
+                    notes: document.getElementById('b-notes').value
+                };
+
+                try {
+                    const res = await fetch(API_URL + 'appointments.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        showMessage("Booking submitted successfully! Waiting for admin approval.");
+                        window.location.href = 'index.html';
+                    } else {
+                        showMessage("Error: " + data.error);
+                    }
+                } catch (err) {
+                    showMessage("Failed to submit booking.");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

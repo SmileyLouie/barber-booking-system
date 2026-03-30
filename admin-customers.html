@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Customers - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .admin-nav {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        .admin-nav .container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Admin.</div>
+                <div class="auth-links">
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-nav">
+        <div class="container">
+            <a href="admin.html">Appointments</a>
+            <a href="admin-services.html">Services</a>
+            <a href="admin-barbers.html">Barbers</a>
+            <a href="admin-customers.html" class="active">Customers</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container container" style="margin-top: 2rem;">
+        <div id="customers" style="width: 100%;">
+            <h2>Registered Customers</h2>
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; overflow-x: auto;">
+                <table id="customers-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+        // No localized overrides needed here anymore. 
+        // admin.js handles renderAdminDashboard and deleteCustomer automatically.
+    </script>
+</body>
+
+</html>

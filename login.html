@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - Camotes Island Barbers</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Camotes Barbers.</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="barbers.html">Barbers</a></li>
+                    <li><a href="booking.html">Book Appointment</a></li>
+                </ul>
+                <div class="auth-links" id="auth-links"></div>
+            </nav>
+        </div>
+    </header>
+
+    <style>
+        .glass-panel {
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .glass-panel h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+        }
+
+        .glass-input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-input {
+            width: 100%;
+            padding: 16px 45px 16px 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Hide the default Edge/IE password reveal 'eye' icon to prevent overlap */
+        .glass-input::-ms-reveal,
+        .glass-input::-ms-clear {
+            display: none;
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+
+        .glass-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            padding: 0 10px;
+        }
+
+        .glass-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .glass-options input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .glass-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 50px;
+            background: var(--text-main);
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .glass-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .glass-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .glass-footer a {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .glass-footer a:hover {
+            color: var(--primary);
+        }
+    </style>
+
+    <div class="container" style="padding-top: 150px; padding-bottom: 50px; position: relative; z-index: 10;">
+        <div style="max-width: 500px; margin: 0 auto;">
+
+            <!-- Login Form -->
+            <div class="glass-panel" id="login-container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div class="glass-input-wrapper">
+                        <input type="email" id="l-email" class="glass-input"
+                            placeholder="Email (e.g. admin@camotes.com)" required>
+                        <svg class="glass-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                            </path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="glass-input-wrapper">
+                        <input type="password" id="l-password" class="glass-input" placeholder="Password" required>
+                        <svg class="glass-icon" style="cursor: pointer; pointer-events: auto;"
+                            onclick="togglePassword('l-password', this)" width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+
+                    <div class="glass-options">
+                        <label><input type="checkbox"> Remember me</label>
+                        <a href="#">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="glass-btn">Login</button>
+
+                    <div class="glass-footer">
+                        Don't have an account? <a href="#" onclick="toggleForms(); return false;"><b>Register</b></a>
+                        <br><br>
+                        <span style="font-size: 0.8rem; opacity: 0.7;">Admin (admin@camotes.com / admin)</span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="glass-panel" id="register-container" style="display: none;">
+                <h2>Create Account</h2>
+                <form id="register-form">
+                    <div class="glass-input-wrapper">
+                        <input type="text" id="r-name" class="glass-input" placeholder="Full Name" required>
+                        <svg class="glass-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div class="glass-input-wrapper">
+                        <input type="email" id="r-email" class="glass-input" placeholder="Email" required>
+                        <svg class="glass-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                            </path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="glass-input-wrapper">
+                        <input type="password" id="r-password" class="glass-input" placeholder="Password" required>
+                        <svg class="glass-icon" style="cursor: pointer; pointer-events: auto;"
+                            onclick="togglePassword('r-password', this)" width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+
+                    <div style="margin-bottom: 3.1rem;"></div>
+
+                    <button type="submit" class="glass-btn">Register</button>
+
+                    <div class="glass-footer">
+                        Already have an account? <a href="#" onclick="toggleForms(); return false;"><b>Login</b></a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="color: #666; text-align: center;">&copy; 2026 Camotes Island Barbers.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        function toggleForms() {
+            const loginSection = document.getElementById('login-container');
+            const registerSection = document.getElementById('register-container');
+
+            if (loginSection.style.display === 'none') {
+                loginSection.style.display = 'block';
+                registerSection.style.display = 'none';
+            } else {
+                loginSection.style.display = 'none';
+                registerSection.style.display = 'block';
+            }
+        }
+
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>`;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verify session with server — do NOT trust localStorage alone
+            try {
+                const res = await fetch(API_URL + 'auth.php?action=check', { credentials: 'include' });
+                const data = await res.json();
+                if (data.logged_in) {
+                    if (data.user.role === 'admin') window.location.href = 'admin.html';
+                    else if (data.user.role === 'barber') window.location.href = 'barber-dashboard.html';
+                    else window.location.href = 'index.html';
+                    return;
+                }
+            } catch (e) { /* session check failed, stay on login page */ }
+
+            // Handle Login
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const em = document.getElementById('l-email').value;
+                const pw = document.getElementById('l-password').value;
+
+                const payload = {
+                    action: 'login',
+                    email: em,
+                    password: pw
+                };
+
+                try {
+                    const res = await fetch(API_URL + 'auth.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            role: data.role || 'customer',
+                            barber_id: data.barber_id || null
+                        }));
+                        if (data.role === 'admin') window.location.href = 'admin.html';
+                        else if (data.role === 'barber') window.location.href = 'barber-dashboard.html';
+                        else window.location.href = 'index.html';
+                    } else {
+                        alert(data.message || "Invalid credentials!");
+                    }
+                } catch (err) {
+                    alert("Login failed.");
+                }
+            });
+
+            // Handle Register
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const n = document.getElementById('r-name').value;
+                const em = document.getElementById('r-email').value;
+                const pw = document.getElementById('r-password').value;
+
+                const formData = new URLSearchParams();
+                formData.append('action', 'register');
+                formData.append('name', n);
+                formData.append('email', em);
+                formData.append('password', pw);
+
+                try {
+                    const res = await fetch(API_URL + 'auth.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert("Account created! Redirecting to homepage.");
+                        window.location.href = 'index.html';
+                    } else {
+                        alert(data.message || "Registration failed.");
+                    }
+                } catch (err) {
+                    alert("Registration failed.");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
